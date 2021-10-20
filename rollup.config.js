@@ -1,9 +1,13 @@
 // rollup.config.js
 
-import camelCase from 'camelcase';
+import { writeFileSync } from 'fs';
+
 import babel from '@rollup/plugin-babel';
+import camelCase from 'camelcase';
 import json from '@rollup/plugin-json';
+import sass from 'rollup-plugin-sass';
 import { terser } from 'rollup-plugin-terser';
+import vue from 'rollup-plugin-vue'; // Handle .vue SFC files
 
 // Uncomment commonjs and/or resolve here and in plugins if required.
 // import commonjs from '@rollup/plugin-commonjs';
@@ -20,8 +24,8 @@ const node = '12'; // Until EOL 2022-04-30
 const targets = '>0.25%, not dead, not IE 11, Firefox ESR';
 
 // External modules.
-const external = []; // e.g. ['axios'];
-const globals = {}; // e.g { axios: 'axios' };
+const external = ['Vue']; // e.g. ['axios'];
+const globals = { vue: 'Vue' }; // e.g { axios: 'axios' };
 
 // Entry file(s) for build.
 const input = ['src/index.js'];
@@ -40,7 +44,33 @@ const plugins = [
   // resolve(), // so Rollup can find CommonJS modules.
   // commonjs(), // so Rollup can convert CommonJS to ES modules.
   json(),
+  vue({
+    css: true, // Dynamically inject css as a <style> tag
+    compileTemplate: true, // Explicitly convert template to render function
+  }),
 ];
+
+const buildCss = {
+  input: 'src/styles/index.scss',
+
+  output: {
+    file: `./dist/${pkg.name}.css.js`,
+  },
+
+  plugins: [
+    sass({
+      input: 'src/styles/index.scss',
+      // Write all styles to the bundle destination where .js is replaced by .css
+      // output: true,
+      output: (styles) => {
+        writeFileSync(`./dist/${pkg.name}.min.css`, banner + styles);
+      },
+      options: {
+        outputStyle: 'compressed',
+      },
+    }),
+  ],
+};
 
 export default [
   // browser-friendly iife build
@@ -117,4 +147,6 @@ export default [
       }),
     ],
   },
+
+  buildCss,
 ];

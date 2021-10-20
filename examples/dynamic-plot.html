@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dynamic plot example</title>
+    <link rel="stylesheet" href="../dist/pbuk.uk-vue.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      <h2>Example 2d plot</h2>
+      <dynamic-plot @loaded="onLoad2d"></dynamic-plot>
+      {{ message }}
+    </div>
+    <script>
+      var app = {
+        setup() {
+          let plot2d;
+
+          const onLoad2d = (createPlot) => {
+            plot2d = createPlot();
+            console.log('Loaded with', createPlot, plot2d);
+            const started = performance.now();
+            let x = 0;
+            const interval = setInterval(() => {
+              plot2d.plot([x, Math.sin(x)]);
+              x += Math.PI / 16;
+              if (performance.now() - started > 10000) {
+                clearInterval(started);
+              }
+            }, 1000);
+          };
+
+          return {
+            message: 'Hello!',
+            onLoad2d,
+          };
+        },
+      };
+    </script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="../dist/pbuk.uk-vue.min.js"></script>
+  </body>
+</html>

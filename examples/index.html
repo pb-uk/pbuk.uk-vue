@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Example</title>
+    <link rel="stylesheet" href="../dist/pbuk.uk-vue.min.css" />
+  </head>
+  <body>
+    <div id="app">
+      This should be replaced
+      <hello-world>Hello!</hello-world>
+      <app-alert dismissible @dismissed="log">This is an alert!</app-alert>
+      <app-icon :name="iconName"></app-icon>
+      <app-icon name="home"></app-icon>
+      <app-icon name="settings" :spin="true"></app-icon>
+      <section>
+        <h2 id="typography">Typography</h2>
+        <p>This is the first paragraph.</p>
+        <p>This is the second paragraph.</p>
+        <p>This is the last paragraph.</p>
+        <h3>An H3 heading</h3>
+        <p>This is the first paragraph.</p>
+        <p>This is the second paragraph.</p>
+        <p>This is the last paragraph.</p>
+      </section>
+    </div>
+    <script>
+      const icons = ['home', 'settings'];
+      var app = {
+        setup() {
+          const { ref } = Vue;
+
+          const iconName = ref('home');
+
+          setInterval(() => {
+            iconName.value = icons[Math.floor(Math.random() * icons.length)];
+          }, 1000);
+
+          return {
+            iconName,
+            log() {
+              console.log('dismissing in app');
+            },
+          };
+        },
+      };
+    </script>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="../dist/pbuk.uk-vue.min.js"></script>
+  </body>
+</html>
