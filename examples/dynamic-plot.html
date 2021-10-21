@@ -20,30 +20,30 @@
           let plot2d;
 
           const onLoad2d = (el) => {
+            const trailPoints = 20;
+            const frameTimeMs = 20;
             plot2d = new Visualize2d(el, {
               aspectRatio: '1:1',
               axes: [
-                {
-                  // x axis.
-                  range: [-1, 1],
-                },
-                {
-                  // y axis.
-                  range: [-1, 1],
-                },
+                // x axis.
+                { range: [-1, 1] },
+                // y axis.
+                { range: [-1, 1] },
               ],
-              data: [{}],
+              data: [{ trailPoints }],
             });
 
             const started = performance.now();
             let t = 0;
             const interval = setInterval(() => {
-              plot2d.plot([Math.cos(t), Math.sin(t)]);
-              t += Math.PI / 16;
+              for (let i = 0; i < trailPoints; ++i) {
+                plot2d.plot([Math.cos(t), Math.sin(t)]);
+                t += 0.01;
+              }
               if (performance.now() - started > 10000) {
                 clearInterval(interval);
               }
-            }, 100);
+            }, frameTimeMs);
           };
 
           return {

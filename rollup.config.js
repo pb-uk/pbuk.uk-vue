@@ -24,7 +24,7 @@ const node = '12'; // Until EOL 2022-04-30
 const targets = '>0.25%, not dead, not IE 11, Firefox ESR';
 
 // External modules.
-const external = ['Vue']; // e.g. ['axios'];
+const external = ['vue']; // e.g. ['axios'];
 const globals = { vue: 'Vue', app: 'app' }; // e.g { axios: 'axios' };
 
 // Entry file(s) for build.

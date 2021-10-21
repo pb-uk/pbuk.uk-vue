@@ -1,5 +1,7 @@
+import { createSvg, setAttributes } from './svg';
 import { Visualize } from './visualize';
 import { Axis2d } from './axis-2d';
+import { Data2d } from './data-2d';
 
 const aspectRatios = {
   '1:1': [900, 900],
@@ -9,27 +11,8 @@ const aspectRatios = {
 
 const defaults = {
   aspectRatio: '16:9',
+  data: [{}],
 };
-
-const ns = 'http://www.w3.org/2000/svg';
-
-function createSvg(name = 'svg', { attributes, parent } = {}) {
-  const el = document.createElementNS(ns, name);
-  if (attributes) {
-    setAttributes(el, attributes);
-  }
-
-  if (parent) {
-    parent.appendChild(el);
-  }
-  return el;
-}
-
-function setAttributes(el, attributes) {
-  Object.entries(attributes).forEach(([name, value]) => {
-    el.setAttribute(name, value);
-  });
-}
 
 export class Visualize2d extends Visualize {
   constructor(el, options) {
@@ -40,6 +23,7 @@ export class Visualize2d extends Visualize {
 
     this.plotEl = createSvg('g', {
       parent: this.svgEl,
+      styles: { fill: '#777', stroke: '#777' },
     });
 
     this.state = {};
@@ -59,11 +43,12 @@ export class Visualize2d extends Visualize {
     const plotMargins = [4, 4, 4, 4];
 
     const [mt, mr, mb, ml] = plotMargins;
-    const plotArea = [ml, mt, width - mr, height - mb];
+    this.state.plotArea = [ml, mt, width - mr, height - mb];
 
-    const [x0, y0, x1, y1] = plotArea;
+    const [x0, y0, x1, y1] = this.state.plotArea;
+
     // Set up the axes.
-    const axes = settings.axes.map((axis, i) => {
+    this.axes = settings.axes.map((axis, i) => {
       // Assume first axis is the x-axis, others are y-axes.
       axis.isX = axis.isX == null ? i === 0 : axis.isX === true;
       if (axis.isX) {
@@ -75,33 +60,15 @@ export class Visualize2d extends Visualize {
       }
       return new Axis2d(axis);
     });
-    console.log(axes);
-    this.state = {
-      ...this.state,
-      plotArea,
-      axes,
-      data: [
-        {
-          axes: [...axes],
-          values: [],
-        },
-      ],
-    };
-  }
 
-  transformValueCoordinates([x, y], [xAxis, yAxis]) {
-    return [(x - xAxis.offset) * xAxis.scale, (y - yAxis.offset) * yAxis.scale];
-  }
+    const [xAxis, yAxis] = this.axes;
 
-  plot(coords) {
-    // this.data[0];
-    const [x, y] = this.transformValueCoordinates(
-      coords,
-      this.state.data[0].axes
-    );
-    createSvg('circle', {
-      attributes: { cx: x, cy: y, r: 2 },
-      parent: this.plotEl,
+    this.data = this.settings.data.map((data) => {
+      return new Data2d({ ...data, parentElement: this.plotEl, xAxis, yAxis });
     });
+  }
+
+  plot(coords, dataId = 0) {
+    this.data[dataId].plot(coords);
   }
 }
