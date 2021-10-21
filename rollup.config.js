@@ -6,7 +6,7 @@ import babel from '@rollup/plugin-babel';
 import camelCase from 'camelcase';
 import json from '@rollup/plugin-json';
 import sass from 'rollup-plugin-sass';
-import { terser } from 'rollup-plugin-terser';
+// import { terser } from 'rollup-plugin-terser';
 import vue from 'rollup-plugin-vue'; // Handle .vue SFC files
 
 // Uncomment commonjs and/or resolve here and in plugins if required.
@@ -97,7 +97,7 @@ export default [
         exclude: 'node_modules/**',
       }),
 
-      terser(),
+      // terser(),
     ],
   },
 

@@ -1,6 +1,6 @@
 const defaults = {};
 
-export class DynamicPlot {
+export class Visualize {
   constructor(el, options) {
     this.settings = { ...defaults, ...options };
     this.el = el;

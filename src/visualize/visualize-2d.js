@@ -1,4 +1,4 @@
-import { DynamicPlot } from './dynamic-plot';
+import { Visualize } from './visualize';
 
 const defaults = {};
 
@@ -44,14 +44,13 @@ function setState() {
   };
 }
 
-export class DynamicPlot2d extends DynamicPlot {
+export class Visualize2d extends Visualize {
   constructor(el, options) {
     super(el, { ...defaults, ...options });
     this.state = setState();
 
     this.svgEl = createSvg('svg', el);
     this.svgEl.setAttributeNS(ns, 'viewBox', '0 0 900 1600');
-    console.log('Width of parent element', el.style.width, el);
     el.style.height = `${(el.clientWidth * 9) / 16}px`;
     this.svgEl.style.width = '100%';
     this.svgEl.style.height = '100%';
@@ -68,7 +67,6 @@ export class DynamicPlot2d extends DynamicPlot {
       coords,
       this.state.data[0].axes
     );
-    console.log(this.plotEl);
     this.plotEl.innerHTML += `<circle cx="${x}" cy="${y}" r="25"/>`;
   }
 }

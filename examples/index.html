@@ -2,14 +2,21 @@
 <html>
   <head>
     <title>Example</title>
-    <link rel="stylesheet" href="../dist/pbuk.uk-vue.min.css" />
+    <link rel="stylesheet" href="../dist/pbuk-vue.min.css" />
+    <script defer src="https://unpkg.com/vue@next"></script>
+    <script defer src="../dist/pbuk-vue.min.js"></script>
   </head>
   <body>
     <div id="app">
       This should be replaced
-      <hello-world>Hello!</hello-world>
+      <h3>
+        Hello World x{{ counter }} <app-button @click="increment">+</app-button>
+      </h3>
+
       <app-alert dismissible @dismissed="log">This is an alert!</app-alert>
-      <app-icon :name="iconName"></app-icon>
+
+    
+          <app-icon :name="iconName"></app-icon>
       <app-icon name="home"></app-icon>
       <app-icon name="settings" :spin="true"></app-icon>
       <section>
@@ -29,22 +36,32 @@
         setup() {
           const { ref } = Vue;
 
+          // Icons.
           const iconName = ref('home');
 
           setInterval(() => {
             iconName.value = icons[Math.floor(Math.random() * icons.length)];
           }, 1000);
 
+          // Model.
+          const counter = ref(0);
+
+          const counterExports = {
+            counter,
+            increment: () => {
+              ++counter.value;
+            },
+          };
+
           return {
             iconName,
             log() {
               console.log('dismissing in app');
             },
+            ...counterExports,
           };
         },
       };
     </script>
-    <script src="https://unpkg.com/vue@next"></script>
-    <script src="../dist/pbuk.uk-vue.min.js"></script>
   </body>
 </html>

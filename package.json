@@ -1,5 +1,5 @@
 {
-  "name": "pbuk.uk-vue",
+  "name": "pbuk-vue",
   "version": "0.1.0",
   "description": "Vue component bundle for pbuk.uk website.",
   "keywords": [
@@ -15,7 +15,7 @@
   "license": "MIT",
   "main": "dist/cjs/index.js",
   "module": "dist/esm/index.js",
-  "browser": "dist/pbuk.uk-vue.min.js",
+  "browser": "dist/pbuk-vue.min.js",
   "scripts": {
     "build": "npm run lint:fix && npm run build:build",
     "build:build": "rollup -c",

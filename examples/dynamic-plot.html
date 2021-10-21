@@ -2,21 +2,25 @@
 <html>
   <head>
     <title>Dynamic plot example</title>
-    <link rel="stylesheet" href="../dist/pbuk.uk-vue.min.css" />
+    <link rel="stylesheet" href="../dist/pbuk-vue.min.css" />
+    <script defer src="https://unpkg.com/vue@next"></script>
+    <script defer src="../dist/pbuk-vue.min.js"></script>
   </head>
   <body>
     <div id="app">
       <h2>Example 2d plot</h2>
-      <dynamic-plot @loaded="onLoad2d"></dynamic-plot>
+      <visualize-dom @loaded="onLoad2d"></visualize-dom>
       {{ message }}
     </div>
     <script>
       var app = {
         setup() {
+          const { Visualize2d } = window.PbukVue;
+
           let plot2d;
 
-          const onLoad2d = (createPlot) => {
-            plot2d = createPlot();
+          const onLoad2d = (el) => {
+            plot2d = new Visualize2d(el);
             const started = performance.now();
             let x = 0;
             const interval = setInterval(() => {
@@ -35,7 +39,5 @@
         },
       };
     </script>
-    <script src="https://unpkg.com/vue@next"></script>
-    <script src="../dist/pbuk.uk-vue.min.js"></script>
   </body>
 </html>
