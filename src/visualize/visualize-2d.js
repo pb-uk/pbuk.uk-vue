@@ -1,60 +1,92 @@
 import { Visualize } from './visualize';
+import { Axis2d } from './axis-2d';
 
-const defaults = {};
+const aspectRatios = {
+  '1:1': [900, 900],
+  '16:9': [1600, 900],
+  '4:3': [1200, 900],
+};
+
+const defaults = {
+  aspectRatio: '16:9',
+};
 
 const ns = 'http://www.w3.org/2000/svg';
 
-function createSvg(name = 'svg', parent) {
+function createSvg(name = 'svg', { attributes, parent } = {}) {
   const el = document.createElementNS(ns, name);
+  if (attributes) {
+    setAttributes(el, attributes);
+  }
+
   if (parent) {
     parent.appendChild(el);
   }
   return el;
 }
 
-function setState() {
-  const plotArea = [200, 100, 1500, 700];
-  const [x0, y0, x1, y1] = plotArea;
-  const xAxis = {
-    min: -10,
-    max: 10,
-    length: x1 - x0,
-    start: x0,
-  };
-  const yAxis = {
-    min: -1,
-    max: 1,
-    length: y0 - y1,
-    start: y1,
-  };
-  const axes = [xAxis, yAxis];
-  axes.forEach((axis) => {
-    axis.scale = axis.length / (axis.max - axis.min);
-    axis.offset = axis.min - axis.start / axis.scale;
+function setAttributes(el, attributes) {
+  Object.entries(attributes).forEach(([name, value]) => {
+    el.setAttribute(name, value);
   });
-  return {
-    plotArea,
-    axes,
-    data: [
-      {
-        axes: [...axes],
-        values: [],
-      },
-    ],
-  };
 }
 
 export class Visualize2d extends Visualize {
   constructor(el, options) {
     super(el, { ...defaults, ...options });
-    this.state = setState();
+    this.svgEl = createSvg('svg', {
+      parent: el,
+    });
 
-    this.svgEl = createSvg('svg', el);
-    this.svgEl.setAttributeNS(ns, 'viewBox', '0 0 900 1600');
-    el.style.height = `${(el.clientWidth * 9) / 16}px`;
-    this.svgEl.style.width = '100%';
-    this.svgEl.style.height = '100%';
-    this.plotEl = createSvg('svg', this.svgEl);
+    this.plotEl = createSvg('g', {
+      parent: this.svgEl,
+    });
+
+    this.state = {};
+    this.setState();
+  }
+
+  setState() {
+    const settings = this.settings;
+
+    this.state.dimensions = aspectRatios[settings.aspectRatio];
+
+    const [width, height] = this.state.dimensions;
+
+    setAttributes(this.svgEl, { viewBox: `0 0 ${width} ${height}` });
+
+    // top, right, bottom, left.
+    const plotMargins = [4, 4, 4, 4];
+
+    const [mt, mr, mb, ml] = plotMargins;
+    const plotArea = [ml, mt, width - mr, height - mb];
+
+    const [x0, y0, x1, y1] = plotArea;
+    // Set up the axes.
+    const axes = settings.axes.map((axis, i) => {
+      // Assume first axis is the x-axis, others are y-axes.
+      axis.isX = axis.isX == null ? i === 0 : axis.isX === true;
+      if (axis.isX) {
+        axis.length = x1 - x0;
+        axis.start = x0;
+      } else {
+        axis.length = y0 - y1;
+        axis.start = y1;
+      }
+      return new Axis2d(axis);
+    });
+    console.log(axes);
+    this.state = {
+      ...this.state,
+      plotArea,
+      axes,
+      data: [
+        {
+          axes: [...axes],
+          values: [],
+        },
+      ],
+    };
   }
 
   transformValueCoordinates([x, y], [xAxis, yAxis]) {
@@ -67,6 +99,9 @@ export class Visualize2d extends Visualize {
       coords,
       this.state.data[0].axes
     );
-    this.plotEl.innerHTML += `<circle cx="${x}" cy="${y}" r="25"/>`;
+    createSvg('circle', {
+      attributes: { cx: x, cy: y, r: 2 },
+      parent: this.plotEl,
+    });
   }
 }

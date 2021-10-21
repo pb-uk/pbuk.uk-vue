@@ -1,4 +1,5 @@
 // src/index.js
+/* global app */
 
 import * as Vue from 'vue';
 
@@ -12,9 +13,8 @@ import VisualizeDom from './components/VisualizeDom.vue';
 
 // Import the application defined in the page.
 const mount = () => {
-  const application = Vue.createApp(window.app);
+  const application = Vue.createApp(app);
 
-  application.component('HelloWorld', HelloWorld);
   application.component('AppAlert', AppAlert);
   application.component('AppButton', AppButton);
   application.component('AppIcon', AppIcon);

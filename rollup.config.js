@@ -25,7 +25,7 @@ const targets = '>0.25%, not dead, not IE 11, Firefox ESR';
 
 // External modules.
 const external = ['Vue']; // e.g. ['axios'];
-const globals = { vue: 'Vue' }; // e.g { axios: 'axios' };
+const globals = { vue: 'Vue', app: 'app' }; // e.g { axios: 'axios' };
 
 // Entry file(s) for build.
 const input = ['src/index.js'];

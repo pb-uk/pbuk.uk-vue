@@ -9,27 +9,41 @@
   <body>
     <div id="app">
       <h2>Example 2d plot</h2>
-      <visualize-dom @loaded="onLoad2d"></visualize-dom>
+      <visualize-dom @loaded="onLoad2d" style="max-width: 50vh"></visualize-dom>
       {{ message }}
     </div>
     <script>
       var app = {
         setup() {
-          const { Visualize2d } = window.PbukVue;
+          const { Visualize2d } = PbukVue;
 
           let plot2d;
 
           const onLoad2d = (el) => {
-            plot2d = new Visualize2d(el);
+            plot2d = new Visualize2d(el, {
+              aspectRatio: '1:1',
+              axes: [
+                {
+                  // x axis.
+                  range: [-1, 1],
+                },
+                {
+                  // y axis.
+                  range: [-1, 1],
+                },
+              ],
+              data: [{}],
+            });
+
             const started = performance.now();
-            let x = 0;
+            let t = 0;
             const interval = setInterval(() => {
-              plot2d.plot([x, Math.sin(x)]);
-              x += Math.PI / 16;
+              plot2d.plot([Math.cos(t), Math.sin(t)]);
+              t += Math.PI / 16;
               if (performance.now() - started > 10000) {
                 clearInterval(interval);
               }
-            }, 1000);
+            }, 100);
           };
 
           return {
